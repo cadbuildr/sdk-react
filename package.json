@@ -1,0 +1,55 @@
+{
+  "name": "@cadbuildr/sdk-react",
+  "version": "0.2.0",
+  "description": "React SDK for embedding CADbuildr-authored configurators on partner storefronts.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "rm -f tsconfig.tsbuildinfo && tsc",
+    "type-check": "tsc --noEmit",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "cad",
+    "configurator",
+    "react",
+    "three-fiber",
+    "cadbuildr"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cadbuildr/sdk-react.git"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@react-three/drei": ">=9.96.0",
+    "@react-three/fiber": ">=8.16.0",
+    "react": ">=18.2.0",
+    "react-dom": ">=18.2.0",
+    "three": ">=0.160.0"
+  },
+  "dependencies": {
+    "@cadbuildr/cad-kernel-r3f": "^0.2.0"
+  },
+  "devDependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/three": "^0.169.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "three": "^0.169.0",
+    "typescript": "^5.7.2"
+  }
+}
