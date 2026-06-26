@@ -7,7 +7,12 @@ The SDK ships:
 - `CadbuildrProvider` — context provider that wires a kernel-api session token,
   project id, and `KernelApiClient`.
 - `CadbuildrViewer` — a `<Canvas>` component (React Three Fiber) that consumes a
-  DAG and renders the resulting STL mesh.
+  DAG and renders the resulting STL mesh. Pass `showTree` to overlay an assembly
+  tree with per-node show/hide toggles, and `defaultHiddenNodeNames` to start
+  with whole sub-assemblies hidden (e.g. `["components"]` to show a bare PCB).
+- `CadbuildrPartsTree` — the standalone assembly tree (show/hide per node), if
+  you want to place it outside the viewer. Helpers `buildPartsTree`,
+  `isInstanceVisible`, etc. are exported for custom scenes.
 - `CadbuildrParameterForm` — a generic parameter UI driven by the project's
   `parameter_ui` schema.
 - `useCadbuildrRender(dag)` hook — manual control for partners that want to

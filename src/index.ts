@@ -4,6 +4,18 @@ export type { CadbuildrContextValue, CadbuildrProviderProps } from "./context";
 export { CadbuildrViewer } from "./CadbuildrViewer";
 export type { CadbuildrViewerProps } from "./CadbuildrViewer";
 
+export { CadbuildrPartsTree } from "./CadbuildrPartsTree";
+export type { CadbuildrPartsTreeProps } from "./CadbuildrPartsTree";
+
+export {
+  buildPartsTree,
+  collectNodeIdsByName,
+  isInstanceVisible,
+  isNodeVisible,
+  walkPartsTree,
+} from "./partsTree";
+export type { PartsTreeNode, PartsTreeNodeKind } from "./partsTree";
+
 export { MeshGroup } from "./MeshGroup";
 export type { MeshGroupProps } from "./MeshGroup";
 

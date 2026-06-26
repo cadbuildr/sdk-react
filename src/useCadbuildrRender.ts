@@ -20,6 +20,12 @@ export interface PartInstancePayload {
   hash: string;
   tf: number[];
   color?: [number, number, number];
+  /** Stable instance id (kernel-assigned). */
+  id?: string;
+  /** Assembly path, e.g. `"pcb/components__689a/led__d4c0"`. Drives the tree. */
+  path?: string;
+  /** Display name of the leaf part, e.g. `"led"`. */
+  name?: string;
 }
 
 export interface SerializedMeshPayload {

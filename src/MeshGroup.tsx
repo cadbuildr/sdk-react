@@ -8,6 +8,7 @@ import {
   type KernelJsonMeshFaces,
 } from "@cadbuildr/cad-kernel-r3f";
 
+import { isInstanceVisible } from "./partsTree";
 import type { SerializedMeshPayload } from "./useCadbuildrRender";
 
 function rgbCss(rgb: [number, number, number] | undefined): string {
@@ -20,6 +21,8 @@ export interface MeshGroupProps {
   meshPayload: SerializedMeshPayload;
   position?: [number, number, number];
   rotation?: [number, number, number];
+  /** Assembly-tree node ids to hide. Instances under a hidden node are culled. */
+  hidden?: ReadonlySet<string>;
 }
 
 /**
@@ -30,6 +33,7 @@ export function MeshGroup({
   meshPayload,
   position = [0, 0, 0],
   rotation = [-Math.PI / 2, 0, 0],
+  hidden,
 }: MeshGroupProps): React.ReactElement | null {
   const items = React.useMemo(() => {
     const out: Array<{
@@ -42,6 +46,7 @@ export function MeshGroup({
       for (const instance of meshPayload.partInstances) {
         const entry = meshPayload.store[instance.hash];
         if (!entry || entry.type !== "mesh") continue;
+        if (hidden && hidden.size > 0 && !isInstanceVisible(instance.path, hidden)) continue;
         out.push({
           key: `${instance.hash}:${instance.tf.join(",")}`,
           geometry: getOrCreateMeshGeometryByHash(
@@ -69,7 +74,7 @@ export function MeshGroup({
       });
     }
     return out;
-  }, [meshPayload]);
+  }, [meshPayload, hidden]);
 
   const cadToScene = React.useMemo(() => {
     const euler = new Euler(rotation[0], rotation[1], rotation[2], "XYZ");
