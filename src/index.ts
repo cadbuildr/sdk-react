@@ -7,6 +7,9 @@ export type { CadbuildrViewerProps } from "./CadbuildrViewer";
 export { CadbuildrPartsTree } from "./CadbuildrPartsTree";
 export type { CadbuildrPartsTreeProps } from "./CadbuildrPartsTree";
 
+export { CadbuildrLoadingOverlay } from "./CadbuildrLoadingOverlay";
+export type { CadbuildrLoadingOverlayProps } from "./CadbuildrLoadingOverlay";
+
 export {
   buildPartsTree,
   collectNodeIdsByName,

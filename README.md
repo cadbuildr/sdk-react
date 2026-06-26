@@ -10,6 +10,11 @@ The SDK ships:
   DAG and renders the resulting STL mesh. Pass `showTree` to overlay an assembly
   tree with per-node show/hide toggles, and `defaultHiddenNodeNames` to start
   with whole sub-assemblies hidden (e.g. `["components"]` to show a bare PCB).
+  Shows a loading wheel while a render is in flight (`showLoadingOverlay`, on by
+  default; pass `loading` to extend it over your own bootstrap). Cold-start 5xx /
+  network errors are retried once automatically.
+- `CadbuildrLoadingOverlay` — the standalone loading wheel (self-contained SVG,
+  no CSS/deps), if you want it outside the viewer.
 - `CadbuildrPartsTree` — the standalone assembly tree (show/hide per node), if
   you want to place it outside the viewer. Helpers `buildPartsTree`,
   `isInstanceVisible`, etc. are exported for custom scenes.
