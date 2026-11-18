@@ -1,0 +1,41 @@
+# Publish @cadbuildr/sdk-react to npm when a version tag is pushed.
+#
+#   git tag v0.5.0 && git push origin v0.5.0
+#
+# Uses npm Trusted Publishing (OIDC): no NPM_TOKEN secret, no local `npm login`.
+# One-time setup on npmjs.com → package @cadbuildr/sdk-react → Settings →
+# Trusted Publisher → GitHub Actions: owner `cadbuildr`, repository `sdk-react`,
+# workflow `publish.yml`. Each release also gets a provenance attestation.
+name: publish
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+  id-token: write # OIDC token for npm trusted publishing + provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24 # ships npm 11 (trusted publishing needs >= 11.5.1)
+          registry-url: https://registry.npmjs.org
+
+      - name: Tag must match package.json version
+        run: |
+          pkg="v$(node -p "require('./package.json').version")"
+          if [ "$pkg" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match package.json version $pkg"
+            exit 1
+          fi
+
+      - run: npm ci
+
+      # prepublishOnly runs the build (tsc → dist/).
+      - run: npm publish --access public
