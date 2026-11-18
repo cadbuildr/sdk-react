@@ -11,6 +11,9 @@ import {
 import { isInstanceVisible } from "./partsTree";
 import type { SerializedMeshPayload } from "./useCadbuildrRender";
 
+/** Opacity of every part in x-ray mode — low enough to see interior joinery. */
+const XRAY_OPACITY = 0.28;
+
 function rgbCss(rgb: [number, number, number] | undefined): string {
   if (!rgb) return "#a8b0c0";
   const [r, g, b] = rgb;
@@ -23,6 +26,8 @@ export interface MeshGroupProps {
   rotation?: [number, number, number];
   /** Assembly-tree node ids to hide. Instances under a hidden node are culled. */
   hidden?: ReadonlySet<string>;
+  /** Render every part semi-transparent so interior geometry stays visible. */
+  xray?: boolean;
 }
 
 /**
@@ -34,6 +39,7 @@ export function MeshGroup({
   position = [0, 0, 0],
   rotation = [-Math.PI / 2, 0, 0],
   hidden,
+  xray = false,
 }: MeshGroupProps): React.ReactElement | null {
   const items = React.useMemo(() => {
     const out: Array<{
@@ -43,12 +49,14 @@ export function MeshGroup({
       matrix: Matrix4;
     }> = [];
     if (meshPayload.partInstances?.length) {
-      for (const instance of meshPayload.partInstances) {
+      meshPayload.partInstances.forEach((instance, index) => {
         const entry = meshPayload.store[instance.hash];
-        if (!entry || entry.type !== "mesh") continue;
-        if (hidden && hidden.size > 0 && !isInstanceVisible(instance.path, hidden)) continue;
+        if (!entry || entry.type !== "mesh") return;
+        if (hidden && hidden.size > 0 && !isInstanceVisible(instance.path, hidden)) return;
         out.push({
-          key: `${instance.hash}:${instance.tf.join(",")}`,
+          // The kernel id is unique per instance; hash+transform is not when two
+          // instances coincide, so older payloads fall back to the index too.
+          key: instance.id ?? `${instance.hash}:${instance.tf.join(",")}:${index}`,
           geometry: getOrCreateMeshGeometryByHash(
             instance.hash,
             entry.data.faces as KernelJsonMeshFaces,
@@ -56,7 +64,7 @@ export function MeshGroup({
           color: instance.color ?? entry.data.color,
           matrix: new Matrix4().fromArray(instance.tf),
         });
-      }
+      });
       return out;
     }
     const store = meshPayload.store ?? {};
@@ -95,7 +103,14 @@ export function MeshGroup({
         return (
           <group key={item.key} matrix={worldMatrix} matrixAutoUpdate={false}>
             <mesh geometry={item.geometry}>
-              <meshStandardMaterial color={rgbCss(item.color)} metalness={0.1} roughness={0.45} />
+              <meshStandardMaterial
+                color={rgbCss(item.color)}
+                metalness={0.1}
+                roughness={0.45}
+                transparent={xray}
+                opacity={xray ? XRAY_OPACITY : 1}
+                depthWrite={!xray}
+              />
             </mesh>
           </group>
         );
